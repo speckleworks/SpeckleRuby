@@ -22,22 +22,22 @@ class Speckler
     ss.each {|e|
       if e.kind_of? Sketchup::Group
 
+        mesh = SpeckleMesh.new
 
         e.entities.each {|f|
           if f.kind_of? Sketchup::Face
-            mesh = SpeckleMesh.new
-
             f.mesh.polygons.each {|arr|
               puts "FACE LENGTH: #{arr.length}"
               if arr.length == 3
                 mesh.add_triangle(f.mesh.point_at(arr[0]), f.mesh.point_at(arr[1]), f.mesh.point_at(arr[2]))
               end
             }
-
-            response.resources.push(mesh)
           end
 
         }
+
+        response.resources.push(mesh)
+
 
         # poly = SpecklePolyline.new
         # response.resources.push(poly)
