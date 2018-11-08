@@ -14,9 +14,9 @@ class SpecklePolyline < SpeckleObject
   end
 
   def addPoint(v)
-    @value.push(v.x)
-    @value.push(v.y)
-    @value.push(v.z)
+    @value.push(v.x.to_f)
+    @value.push(v.y.to_f)
+    @value.push(v.z.to_f)
   end
 
   def to_hash

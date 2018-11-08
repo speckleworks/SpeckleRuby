@@ -22,10 +22,15 @@ class Speckler
     ss.each {|e|
       if e.kind_of? Sketchup::Group
 
-        mesh = SpeckleMesh.new
+        mesh = nil
+        poly = nil
 
         e.entities.each {|f|
           if f.kind_of? Sketchup::Face
+            unless mesh
+              mesh = SpeckleMesh.new
+            end
+
             f.mesh.polygons.each {|arr|
               puts "FACE LENGTH: #{arr.length}"
               if arr.length == 3
@@ -34,9 +39,30 @@ class Speckler
             }
           end
 
+          #TODO support branching edges (this only works for independent loops)
+          if f.kind_of? Sketchup::Edge
+            puts "EDGE: #{f} #{f.vertices.length}"
+            puts "all_connected: #{f.all_connected.index(f)}"
+            if f.all_connected.index(f) == 0 #we only want to add the interconnected edges once, so only add if this is the first edge
+              poly = SpecklePolyline.new
+
+              poly.addPoint(f.all_connected[0].start.position)
+              f.all_connected.each {|edge|
+                poly.addPoint(edge.end.position)
+              }
+
+              poly.closed = f.all_connected[0].start.position == f.all_connected[-1].end.position
+
+              response.resources.push(poly)
+            end
+
+          end
+
         }
 
-        response.resources.push(mesh)
+        if mesh
+          response.resources.push(mesh)
+        end
 
 
         # poly = SpecklePolyline.new
