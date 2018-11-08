@@ -46,7 +46,16 @@ class SpeckleMesh < SpeckleObject
     @faces.push(add_pt(pt4))
   end
 
+  def flatten_pts(pts)
+    ans = []
+    pts.each {|pt|
+      ans += [pt.x.to_f, pt.y.to_f, pt.z.to_f]
+    }
+    ans
+  end
+
   def to_hash
+    @vertices = flatten_pts(@points_list)
     {
         :vertices => @vertices,
         :faces => @faces,

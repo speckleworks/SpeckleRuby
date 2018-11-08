@@ -17,39 +17,37 @@ class Speckler
     # then go through all polygons and generate triangles array corresponding to new index positions
     # I think polygons are a series of triangles (they look like 3x)
 
+    response = ResponseObject.new
+
     ss.each {|e|
       if e.kind_of? Sketchup::Group
 
-        response = ResponseObject.new
-
-        mesh = SpeckleMesh.new
-        poly = SpecklePolyline.new
-
-        response.resources.push(mesh)
-        response.resources.push(poly)
-
-        jsonData = response.to_json
-        File.open('C:\\Temp\\speckleJsonData.json', 'w') {|file| file.write(jsonData)}
 
         e.entities.each {|f|
           if f.kind_of? Sketchup::Face
-            puts f.mesh
+            mesh = SpeckleMesh.new
+
             f.mesh.polygons.each {|arr|
               puts "FACE LENGTH: #{arr.length}"
               if arr.length == 3
                 mesh.add_triangle(f.mesh.point_at(arr[0]), f.mesh.point_at(arr[1]), f.mesh.point_at(arr[2]))
               end
-              arr.each {|p|
-                #NOTE - values here mean a hidden edge
-                puts "#{p} #{f.mesh.point_at(p)}"
-                poly.addPoint(f.mesh.point_at(p))
-              }
             }
+
+            response.resources.push(mesh)
           end
 
         }
+
+        # poly = SpecklePolyline.new
+        # response.resources.push(poly)
+        # poly.addPoint(f.mesh.point_at(p))
+
       end
     }
+
+    json_data = response.to_json
+    File.open('C:\\Temp\\speckleJsonData.json', 'w') {|file| file.write(json_data)}
 
   end
 end
