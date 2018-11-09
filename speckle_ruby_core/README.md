@@ -11,7 +11,7 @@ https://speckleworks.github.io/SpeckleSpecs/
 Objects are designed to be serialized directly to JSON using the standard "to_json" method. Each object exposes properties to be serialized as JSON using a to_hash method and child classes merge their properties with their parents in this method.
 
 For example the SpecklePolyline class extends SpeckleObject and defines a serialization Hash as follows:
-`
+```ruby
   def to_hash
     {
         :closed => @closed,
@@ -19,7 +19,7 @@ For example the SpecklePolyline class extends SpeckleObject and defines a serial
         :domain => @domain,
     }.merge(super.to_hash)
   end
-`
+```
 
 ## Spec Compliance
 - [x] ResourceBase
