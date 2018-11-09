@@ -1,3 +1,5 @@
+# speckle_ruby_core
+
 Core objects from the Speckle Spec are defined in "speckle_ruby_core". 
 
 Although the primary use case for Ruby is interfacing with SketchUp, no SketchUp objects should be referenced in core.
@@ -5,7 +7,21 @@ Although the primary use case for Ruby is interfacing with SketchUp, no SketchUp
 The full spec can be found here: 
 https://speckleworks.github.io/SpeckleSpecs/
 
-###Spec Compliance
+## JSON Serialization
+Objects are designed to be serialized directly to JSON using the standard "to_json" method. Each object exposes properties to be serialized as JSON using a to_hash method and child classes merge their properties with their parents in this method.
+
+For example the SpecklePolyline class extends SpeckleObject and defines a serialization Hash as follows:
+`
+  def to_hash
+    {
+        :closed => @closed,
+        :value => @value,
+        :domain => @domain,
+    }.merge(super.to_hash)
+  end
+`
+
+## Spec Compliance
 - [x] ResourceBase
 - [ ] User
 - [ ] AppClient

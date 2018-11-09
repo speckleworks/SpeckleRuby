@@ -8,83 +8,11 @@
     <title>speckle</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
-    <script>
-        var _callRuby = function (method, args) {
-            window.location.href = 'skp:' + method + '@' + JSON.stringify(args);
-        };
-        const test = function () {
-            _callRuby('setName', {clientId: 'client name', name: 'My Name'});
-        };
-        var Interop = {
-            getHostApplicationType: function () {
-                return new Promise(function (resolve, reject) {
-                    resolve('SketchUp');
-                });
-            },
-            getUserAccounts: function () {
-                return new Promise(function (resolve, reject) {
-                    resolve([]);
-                });
-            },
-            getAllClients: function () {
-                return new Promise(function (resolve, reject) {
-                    resolve([]);
-                });
-            },
-            removeClient: function (clientId) {
-                return new Promise(function (resolve, reject) {
-                    resolve([]);
-                });
-            },
-            appReady: function () {
-                test();
-            },
-            bakeClient: function (clientId) {
-                test();
-            },
-            bakeLayer: function (clientId, layerGuid) {
-                test();
-            },
-            setClientPause: function (clientId, status) {
-                test();
-            },
-            setClientVisibility: function (clientId, status) {
-                test();
-            },
-            setClientHover: function (clientId, status) {
-                test();
-            },
-            setLayerVisibility: function (clientId, layerId, status) {
-                test();
-            },
-            setLayerHover: function (clientId, layerId, status) {
-                test();
-            },
-            setObjectHover: function (clientId, layerId, status) {
-                test();
-            },
-            addRemoveObjects: function (clientId, _guids, remove) {
-                test();
-            },
-            refreshClient: function (clientId) {
-                test();
-            },
-            forceSend: function (clientId) {
-                test();
-            },
-            openUrl: function (url) {
-                test();
-            },
-            setName: function (clientId, name) {
-                _callRuby('setName', clientId, name);
-            },
-        };
-    </script>
 </head>
 
 <body>
 <div id="app"></div>
+<script src="./interop.js"></script>
 <script src="./build.js"></script>
 </body>
 
