@@ -72,6 +72,9 @@ var Interop = {
     bakeClient: function (clientId) {
         logCall('bakeClient');
     },
+    addSenderClientFromSelection: function (clientId) {
+        logCall('addSenderClientFromSelection');
+    },
     bakeLayer: function (clientId, layerGuid) {
         logCall('bakeLayer');
     },
