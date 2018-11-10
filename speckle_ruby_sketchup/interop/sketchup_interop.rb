@@ -1,8 +1,15 @@
 require_relative '../../speckle_ruby_core/extra/speckle_account'
 require_relative '../../speckle_ruby_core/extra/layer_selection'
 require_relative '../sketchup_utils'
+require_relative 'speckle_selection_watcher'
 
 class SketchupInterop
+
+  def initialize(speckle_view)
+    @speckle_view = speckle_view
+
+    Sketchup.active_model.selection.add_observer(SpeckleSelectionWatcher.new(@speckle_view))
+  end
 
   def speckle_settings_dir
     ENV['LOCALAPPDATA'] + '\SpeckleSettings'
@@ -59,4 +66,4 @@ class SketchupInterop
 
 end
 
-SketchupInterop.new.read_user_accounts
+# SketchupInterop.new.read_user_accounts

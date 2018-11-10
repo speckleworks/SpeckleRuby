@@ -1,7 +1,7 @@
-require_relative 'sketchup_interop'
+require_relative '../interop/sketchup_interop'
 class SpeckleView
   def initialize
-    @interop = SketchupInterop.new
+    @interop = SketchupInterop.new(self)
   end
 
   def show_web_dialog
@@ -11,11 +11,12 @@ class SpeckleView
             :scrollable => true,
             :resizable => true,
             :width => 300,
-            :height => 400,
+            :height => 450,
             :min_width => 200,
             :min_height => 200,
             :style => UI::HtmlDialog::STYLE_DIALOG
         })
+    @dialog = speckle_view_dialog
 
     speckle_view_dialog.add_action_callback('setName') {|dialog, params|
       # puts "setName CALLED with params : #{dialog} #{params}"
@@ -53,6 +54,8 @@ class SpeckleView
       #
       # js_command = "Interop.UserAccounts = "+JSON.generate(@interop.read_user_accounts)
       # speckle_view_dialog.execute_script(js_command)
+
+      on_selection_change
     }
 
     #can be used to debug against source when using dev server for SpeckleView
@@ -62,6 +65,11 @@ class SpeckleView
     # speckle_view_dialog.set_file(html_path)
 
     speckle_view_dialog.show
+  end
+
+  def on_selection_change
+    js_command = "Interop.NotifySpeckleFrame( 'object-selection', '', #{JSON.generate(@interop.get_layers_and_objects_info)} );"
+    @dialog.execute_script(js_command)
   end
 end
 

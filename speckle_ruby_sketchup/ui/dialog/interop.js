@@ -5,6 +5,12 @@ const logCall = function (callName, args) {
     console.log('logCall ' + callName);
     _callRuby('logCall', {callName: callName, args: args});
 };
+var _prepData = function (data) {
+    //Note: some methods using base64 encoding (temporary workaround for a bug on the Rhino side)
+    var jsonStr = JSON.stringify(data);
+    return window.btoa(jsonStr);
+};
+
 //SketchUp-specific implementation of Rhino
 //-- SpeckleRhino/SpeckleRhinoPlugin/src/Interop.cs
 var Interop = {
@@ -13,6 +19,10 @@ var Interop = {
     SpeckleObjectCache: {},
     SpeckleIsReady: false,
     _returnValues: {},
+    NotifySpeckleFrame: function (method, streamId, data) {
+        //TODO note btoa is only needed for certain specific methods...
+        EventBus.$emit(method, streamId, _prepData(data))
+    },
     getHostApplicationType: function () {
         logCall('getHostApplicationType');
         return new Promise(function (resolve, reject) {
@@ -38,7 +48,7 @@ var Interop = {
             sketchup.getLayersAndObjectsInfo({
                 onCompleted: function () {
                     console.log('Ruby side done for getLayersAndObjectsInfo: ' + JSON.stringify(Interop._returnValues.getLayersAndObjectsInfo));
-                    resolve(JSON.stringify(Interop._returnValues.getLayersAndObjectsInfo));
+                    resolve(_prepData(Interop._returnValues.getLayersAndObjectsInfo));
                 }
             });
         });
