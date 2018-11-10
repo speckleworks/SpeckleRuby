@@ -18,4 +18,10 @@ class SketchupUtils
     end
     self.get_global_transform(grp) * ent_transform
   end
+
+  def self.color_to_hex(color)
+    ans = '#'
+    [color.red, color.green, color.blue].each {|c| ans << c.to_s(16).rjust(2, '0')}
+    ans
+  end
 end

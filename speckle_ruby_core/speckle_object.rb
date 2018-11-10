@@ -40,8 +40,4 @@ class SpeckleObject < ResourceBase
   def geometryHash
     "#{@type}.#{@hash}"
   end
-
-  def to_json(*args)
-    to_hash.to_json
-  end
 end

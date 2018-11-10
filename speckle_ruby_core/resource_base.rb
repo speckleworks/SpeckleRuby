@@ -1,5 +1,6 @@
 require 'securerandom'
-class ResourceBase
+require_relative 'core/json_core'
+class ResourceBase < JsonCore
   attr_accessor :_id # "string",
   attr_accessor :owner # "string",
   attr_accessor :private # true,

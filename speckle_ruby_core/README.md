@@ -64,6 +64,9 @@ For example the SpecklePolyline class extends SpeckleObject and defines a serial
 - [ ] SpeckleAnnotation
 - [ ] SpeckleBlock
 
-
+## Extra
+The extra subdirectory contains additional Speckle classes that are used, but not part of the official spec (yet)
+- [x] SpeckleAccount
+- [x] LayerSelection
 
 
