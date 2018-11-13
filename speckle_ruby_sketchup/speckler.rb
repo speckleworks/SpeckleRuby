@@ -1,7 +1,6 @@
 require_relative 'sketchup_utils'
 require_relative '../speckle_ruby_core/speckle_mesh'
 require_relative '../speckle_ruby_core/speckle_polyline'
-require_relative '../speckle_ruby_core/speckle_polyline'
 
 class Speckler
   def meshify
