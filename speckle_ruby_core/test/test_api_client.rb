@@ -17,6 +17,30 @@ class TestApiClient < Test::Unit::TestCase
     @store = PStore.new("TestApiClient_test_data")
   end
 
+  def is_empty(v)
+    (v.is_a?(Hash) and v.respond_to?('empty?') and v.compact.empty?) or
+        (v.nil?)  or
+        (v.is_a?(String) and v.empty?)
+  end
+
+  def objects_equal(match, check, ignore) # test object equality - not worrying about string vs hash keys
+    unless match.is_a?(Hash) && check.is_a?(Hash)
+      return false
+    end
+    match.each do |k, v|
+      next if ignore.include?(k.to_s)
+      check_val = check[k.to_s]
+      unless check_val == v
+        next if is_empty(check_val) and is_empty(v)
+        unless objects_equal(v, check_val, ignore)
+          puts "Test failed on property '#{k}': #{check_val} vs #{v}"
+          return false
+        end
+      end
+    end
+    true
+  end
+
   def test_object
     @test_objects.polyline
   end
@@ -32,6 +56,17 @@ class TestApiClient < Test::Unit::TestCase
     end
   end
 
+  def test_send_objects
+    res = @client.object_create([@test_objects.mesh, test_object])
+    # resData = JSON.parse(res.body)
+    assert(res.code == "200", res.message)
+    @store.transaction do
+      test_id = JSON.parse(res.body)['resources'][1]['_id'] # check for second object
+      assert(!test_id.nil?, "ID exists")
+      @store[:test_id] = test_id
+    end
+  end
+
   def test_get_object
     test_id = @store.transaction {@store[:test_id]}
     assert(!test_id.nil?, "Test ID exists")
@@ -41,22 +76,7 @@ class TestApiClient < Test::Unit::TestCase
 
     object = JSON.parse(res.body)
     assert(object['success'], 'Success test')
-    assert(objects_equal(test_object, object['resource'], ['_id', 'owner', 'hash', 'geometryHash']), 'Object equality test')
+    assert(objects_equal(test_object.to_hash, object['resource'], ['_id', 'owner', 'hash', 'geometryHash', 'applicationId']), 'Object equality test')
   end
 
-  def objects_equal(match, check, ignore) # test object equality - not worrying about string vs hash keys
-    unless match.is_a?(Hash) && check.is_a?(Hash)
-      return false
-    end
-    match.each do |k, v|
-      next if ignore.include?(k.to_s)
-      unless check[k.to_s] == v
-        unless objects_equal(v, check[k.to_s], ignore)
-          puts "Test failed on property '#{k}': #{check[k.to_s]} vs #{v}"
-          return false
-        end
-      end
-    end
-    true
-  end
 end
