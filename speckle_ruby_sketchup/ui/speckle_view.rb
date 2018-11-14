@@ -36,7 +36,7 @@ class SpeckleView
       puts "CALLED getUserAccounts #{params}"
 
       user_accounts = @interop.read_user_accounts
-      js_command = "Interop.UserAccounts = "+JSON.generate(user_accounts)
+      js_command = "Interop.UserAccounts = "+ JSON.generate(user_accounts)
       # puts "js_command: #{js_command}"
       speckle_view_dialog.execute_script(js_command)
       #Note we set the Interop.UserAccounts property here so it is available in the callback (there is no way to directly return the value)
