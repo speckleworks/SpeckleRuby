@@ -11,8 +11,8 @@ class ResourceBase < JsonCore
   attr_accessor :deleted # false
 
   def initialize
-    @_id = SecureRandom.uuid
-    @owner = SecureRandom.uuid
+    # @_id = SecureRandom.uuid #these should be set by the server...
+    # @owner = SecureRandom.uuid
     @private = false
     @deleted = false
     @canRead = []

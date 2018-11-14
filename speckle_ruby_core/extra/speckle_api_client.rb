@@ -14,10 +14,14 @@ class SpeckleApiClient
     @authToken = authToken
   end
 
+  def use_ssl
+    @baseUrl.index('https://') == 0
+  end
+
   def post(path, body)
     uri = get_uri(path)
 
-    res = Net::HTTP.start(uri.host, uri.port, use_ssl: false) do |http|
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: use_ssl) do |http|
       req = Net::HTTP::Post.new(uri)
       req['Content-Type'] = 'application/json'
       req['Accept'] = 'application/json'
@@ -32,7 +36,7 @@ class SpeckleApiClient
   def get(path)
     uri = get_uri(path)
 
-    res = Net::HTTP.start(uri.host, uri.port, use_ssl: false) do |http|
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: use_ssl) do |http|
       req = Net::HTTP::Get.new(uri)
       req['Accept'] = 'application/json'
       req['Authorization'] = @authToken
@@ -43,7 +47,7 @@ class SpeckleApiClient
 
   def delete(path)
     uri = get_uri(path)
-    res = Net::HTTP.start(uri.host, uri.port, use_ssl: false) do |http|
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: use_ssl) do |http|
       req = Net::HTTP::Delete.new(uri)
       req['Accept'] = 'application/json'
       req['Authorization'] = @authToken
@@ -60,7 +64,7 @@ class SpeckleApiClient
   end
 
   def object_get(object_id)
-    get("/objects/#{object_id}/")
+    get("/objects/#{object_id}")
   end
 
   def object_delete(object_id)

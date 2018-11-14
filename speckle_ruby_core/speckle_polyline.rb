@@ -10,7 +10,7 @@ class SpecklePolyline < SpeckleObject
     @type = 'Polyline'
     @closed = true
     @value = []
-    @domain = {}
+    @domain = nil #SpeckleInterval
   end
 
   def addPoint(v)
