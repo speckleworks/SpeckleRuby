@@ -5,6 +5,7 @@ class SpeckleMesh < SpeckleObject
   attr_accessor :faces # [],
   attr_accessor :colors # [],
   attr_accessor :textureCoordinates # []
+  attr_reader :type
 
   def initialize
     super

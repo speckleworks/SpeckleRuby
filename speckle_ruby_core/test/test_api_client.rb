@@ -1,8 +1,8 @@
 require 'test/unit'
+require "pstore"
 require_relative 'ruby_test_objects'
 require_relative '../../speckle_ruby_core/extra/speckle_api_client'
 require_relative '../../speckle_ruby_core/extra/speckle_interop'
-require "pstore"
 
 class TestApiClient < Test::Unit::TestCase
   def setup
@@ -43,6 +43,15 @@ class TestApiClient < Test::Unit::TestCase
 
   def test_object
     @test_objects.polyline
+  end
+
+  def test_stream
+    @test_objects.stream('ry5GDjoaX')
+  end
+
+  def test_stream_update
+    res = @client.stream_update(test_stream)
+    assert(res.code == "200", res.message)
   end
 
   def test_send_object

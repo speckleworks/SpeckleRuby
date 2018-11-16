@@ -20,6 +20,13 @@ class RubyTestObjects
     polyline.closed = true
     polyline
   end
+
+  def stream(id)
+    stream = SpeckleStream.new(id)
+    stream.add_object(polyline, 'Layer 1', '#ff0000')
+    stream.add_object(mesh, 'Layer 1', '#ff0000')
+    stream
+  end
 end
 
 # "domain": {},
