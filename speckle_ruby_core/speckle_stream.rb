@@ -14,7 +14,8 @@ class SpeckleStream < ResourceBase
   def initialize(stream_id)
     super
     @streamId = stream_id
-    @objects = []
+    @placeholder_objects = [] # maintain the PlaceHolder object array for the stream
+    @speckle_objects_by_id = {} # store a lookup of SpeckleObjects by their application id
     @layers = []
     @layers_by_name = {}
   end
@@ -27,7 +28,16 @@ class SpeckleStream < ResourceBase
     end
     #TODO objects should be sorted to ensure order is maintained within stream objects and Layer.startIndex
     @layers_by_name[layer_name].add_object(@objects.length)
-    @objects.push(object)
+    @placeholder_objects.push(object)
+  end
+
+  def connect_placeholders(speckle_objects, server_generated_ids)
+    # any time a SpeckleObject is updated, it gets a new id from the server
+    # the stream is expected to maintain a list of these ids as Placeholder objects (the @placeholder_objects array here)
+    # internally, we use the applicationId as a way to keep track of objects in this stream
+    speckle_objects.zip(server_generated_ids).each do |speckle_object, id|
+      @placeholder_objects.push(speckle_object.update_id(id))
+    end
   end
 
   def to_hash

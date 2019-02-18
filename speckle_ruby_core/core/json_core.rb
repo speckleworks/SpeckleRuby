@@ -4,8 +4,9 @@ class JsonCore
   end
 
   def compact(hash) #https://stackoverflow.com/questions/3450641/removing-all-empty-elements-from-a-hash-yaml
+    # removed clause "and v.compact.empty?)" as not supported by this ruby version
     hash.delete_if{|k, v|
-      (v.is_a?(Hash) and v.respond_to?('empty?') and v.compact.empty?) or
+      (v.is_a?(Hash) and v.respond_to?('empty?')) or
           (v.nil?)  or
           (v.is_a?(String) and v.empty?)
     }

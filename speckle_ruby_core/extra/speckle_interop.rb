@@ -2,7 +2,8 @@ require_relative 'speckle_account'
 class SpeckleInterop
 
   def speckle_settings_dir
-    ENV['LOCALAPPDATA'] + '\SpeckleSettings'
+    #TODO update to support SQLite db
+    ENV['LOCALAPPDATA'] + '\SpeckleSettings\MigratedAccounts'
   end
 
   def read_user_accounts
@@ -27,5 +28,13 @@ class SpeckleInterop
 
   def user_accounts
     @user_accounts
+  end
+
+  def document_guid
+    'TODO'
+  end
+
+  def document_name
+    'TODO'
   end
 end

@@ -41,7 +41,7 @@ For example the SpecklePolyline class extends SpeckleObject and defines a serial
 - [ ] ResponseStreamDiff
 - [x] SpeckleObject
 - [ ] SpeckleAbstract
-- [ ] SpecklePlaceholder
+- [x] SpecklePlaceholder
 - [ ] SpeckleBoolean
 - [ ] SpeckleNumber
 - [ ] SpeckleString

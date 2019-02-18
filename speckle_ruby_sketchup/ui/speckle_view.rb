@@ -18,6 +18,18 @@ class SpeckleView
         })
     @dialog = speckle_view_dialog
 
+    speckle_view_dialog.add_action_callback('addSenderClientFromSelection') {|dialog, payload|
+      args = payload
+      puts "addSenderClientFromSelection CALLED #{args['streamName']} #{args['account']} #{args['selection']}"
+      SpeckleRubySender.new(payload, @interop)
+    }
+
+    speckle_view_dialog.add_action_callback('addRemoveObjects') {|dialog, params|
+      # puts "setName CALLED with params : #{dialog} #{params}"
+      args = JSON.parse(params)
+      puts "addRemoveObjects CALLED #{args['clientId']} #{args['remove']}"
+    }
+
     speckle_view_dialog.add_action_callback('setName') {|dialog, params|
       # puts "setName CALLED with params : #{dialog} #{params}"
       args = JSON.parse(params)

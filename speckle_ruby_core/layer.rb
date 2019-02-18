@@ -19,6 +19,7 @@ class Layer < JsonCore
   end
 
   def add_object(index)
+    #TODO the startIndex refers to a position in the stream... so we should maintain that there
     if @objectCount == 0
       @startIndex = index
     end

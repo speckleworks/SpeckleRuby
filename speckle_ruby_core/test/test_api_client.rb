@@ -46,10 +46,23 @@ class TestApiClient < Test::Unit::TestCase
   end
 
   def test_stream
-    @test_objects.stream('ry5GDjoaX')
+    @test_objects.stream('ry5GDjoaX') # NOTE insert the ID of a stream created already on your server...
   end
 
   def test_stream_update
+    # streams need to keep track of objects within the application and associate these with the correct ID from the server
+    objects = [@test_objects.polyline, @test_objects.mesh]
+    create_res = @client.object_create(objects)
+    stream = test_stream
+
+    server_generated_ids = []
+    JSON.parse(create_res.body)['resources'].each { |resource|
+      server_generated_ids.push(resource['_id'])
+    }
+    stream.connect_placeholders(objects, server_generated_ids)
+
+    test_id = [0]
+
     res = @client.stream_update(test_stream)
     assert(res.code == "200", res.message)
   end

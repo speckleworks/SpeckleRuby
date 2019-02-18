@@ -1,7 +1,7 @@
 var _callRuby = function (method, args) {//TODO replace this old method with the new "sketchup." syntax
     window.location.href = 'skp:' + method + '@' + JSON.stringify(args);
 };
-const logCall = function (callName, args) {
+var logCall = function (callName, args) {
     console.log('logCall ' + callName);
     _callRuby('logCall', {callName: callName, args: args});
 };
@@ -98,6 +98,10 @@ var Interop = {
     },
     addRemoveObjects: function (clientId, _guids, remove) {
         logCall('addRemoveObjects');
+        sketchup.addRemoveObjects({
+            clientId: clientId
+        });
+        // _callRuby('addRemoveObjects', clientId, _guids, remove);
     },
     refreshClient: function (clientId) {
         logCall('refreshClient');
