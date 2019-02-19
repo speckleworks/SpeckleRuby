@@ -30,7 +30,13 @@ class SpeckleView
     speckle_view_dialog.add_action_callback('getSelectedMesh') {|dialog, params|
       # puts "setName CALLED with params : #{dialog} #{params}"
       # args = JSON.parse(params)
-      send_response_to_view(get_current_selection)
+      send_response_to_view(get_current_selection, 'mesh')
+    }
+
+    speckle_view_dialog.add_action_callback('getSelectedPaths') {|dialog, params|
+      # puts "setName CALLED with params : #{dialog} #{params}"
+      # args = JSON.parse(params)
+      send_response_to_view(get_current_selection, 'paths')
     }
 
     speckle_view_dialog.show
@@ -47,14 +53,14 @@ class SpeckleView
     @speckler.create_speckle_objects(ss)
   end
 
-  def send_response_to_view(response)
-    js_command = "Interop.UpdateObjects(#{JSON.generate(response)} );"
+  def send_response_to_view(response, command)
+    js_command = "Interop.UpdateObjects(#{JSON.generate(response)}, '#{command}');"
     @dialog.execute_script(js_command)
   end
 
   def on_selection_change
-    js_command = "Interop.NotifySpeckleFrame( 'object-selection', '', #{JSON.generate(@interop.get_layers_and_objects_info)} );"
-    @dialog.execute_script(js_command)
+    # js_command = "Interop.NotifySpeckleFrame( 'object-selection', '', #{JSON.generate(@interop.get_layers_and_objects_info)} );"
+    # @dialog.execute_script(js_command)
   end
 end
 

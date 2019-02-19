@@ -19,7 +19,8 @@ class Speckler
               mesh = SpeckleMesh.new
             end
 
-            t = SketchupUtils.get_global_transform(f)
+            #t = SketchupUtils.get_global_transform(f) -- global transform doesn't work with "instanced" groups
+            t = e.transformation
 
             f.mesh.polygons.each {|arr|
               # puts "FACE LENGTH: #{arr.length}"
@@ -29,6 +30,40 @@ class Speckler
                                   mesh_point(t, f.mesh, arr[2]))
               end
             }
+          end
+
+          if f.kind_of? Sketchup::Edge
+            # puts "ALL CONNECTED: #{f.all_connected}"
+
+            all_connected_edges = f.all_connected.select {|edge| edge.kind_of? Sketchup::Edge}
+
+            puts "EDGE: #{all_connected_edges.index(f)} ... #{f.vertices.length}"
+
+
+            if all_connected_edges.index(f) == 0 #we only want to add the interconnected edges once, so only add if this is the first edge
+              puts "all_connected: #{all_connected_edges.index(f)}"
+              poly = SpecklePolyline.new
+
+              # t = SketchupUtils.get_global_transform(f)
+              t = e.transformation
+
+              c_pos = all_connected_edges[0].end.position
+              poly.addPoint(c_pos.transform(t))
+
+              chain, closed = chain_vertices(all_connected_edges)
+              puts "chain: #{chain}"
+              puts "closed: #{closed}"
+              if chain
+                chain.each {|v|
+                  poly.addPoint(v.position.transform(t))
+                }
+              end
+
+              poly.closed = closed
+
+              response.resources.push(poly)
+            end
+
           end
         }
 
