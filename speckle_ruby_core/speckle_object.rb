@@ -8,6 +8,7 @@ class SpeckleObject < ResourceBase
   attr_accessor :applicationId # "GUID" this represents the internal object ID in the host application (e.g. Rhino) it is NOT the same across all clients.
   attr_accessor :properties # {},
   attr_accessor :parent # "string",
+  attr_accessor :name # "string",
   attr_accessor :children # [],
   attr_accessor :ancestors # [],
   attr_accessor :transform # []
@@ -17,6 +18,7 @@ class SpeckleObject < ResourceBase
     @hash = SecureRandom.uuid
     @applicationId = nil
     @parent = ''
+    @name = ''
     @properties = {}
     @children = []
     @ancestors = []
@@ -38,6 +40,7 @@ class SpeckleObject < ResourceBase
         :applicationId => @applicationId,
         :properties => @properties,
         :parent => @parent,
+        :name => @name,
         :children => @children,
         :ancestors => @ancestors,
         :transform => @transform

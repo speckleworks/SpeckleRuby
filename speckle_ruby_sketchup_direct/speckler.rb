@@ -4,7 +4,7 @@ require_relative '../speckle_ruby_core/speckle_mesh'
 require_relative '../speckle_ruby_core/speckle_polyline'
 
 class Speckler
-  def create_speckle_objects(ss)
+  def create_speckle_objects(ss, types = ['face', 'edge'])
     response = ResponseObject.new
 
     ss.each {|e|
@@ -14,9 +14,14 @@ class Speckler
         poly = nil
 
         e.entities.each {|f|
-          if f.kind_of? Sketchup::Face
+          if types.include?('face') and f.kind_of? Sketchup::Face
             unless mesh
               mesh = SpeckleMesh.new
+              mesh.name = e.name
+              mesh.colors = ['#ffffff']
+              if e.material
+                mesh.colors = [SketchupUtils.color_to_hex(e.material.color)]
+              end
             end
 
             #t = SketchupUtils.get_global_transform(f) -- global transform doesn't work with "instanced" groups
@@ -32,18 +37,18 @@ class Speckler
             }
           end
 
-          if f.kind_of? Sketchup::Edge
+          if types.include?('edge') and f.kind_of? Sketchup::Edge
             # puts "ALL CONNECTED: #{f.all_connected}"
 
             all_connected_edges = f.all_connected.select {|edge| edge.kind_of? Sketchup::Edge}
 
-            puts "EDGE: #{all_connected_edges.index(f)} ... #{f.vertices.length}"
+            # puts "EDGE: #{all_connected_edges.index(f)} ... #{f.vertices.length}"
 
 
             if all_connected_edges.index(f) == 0 #we only want to add the interconnected edges once, so only add if this is the first edge
-              puts "all_connected: #{all_connected_edges.index(f)}"
+              # puts "all_connected: #{all_connected_edges.index(f)}"
               poly = SpecklePolyline.new
-
+              poly.name = e.name
               # t = SketchupUtils.get_global_transform(f)
               t = e.transformation
 
@@ -51,8 +56,8 @@ class Speckler
               poly.addPoint(c_pos.transform(t))
 
               chain, closed = chain_vertices(all_connected_edges)
-              puts "chain: #{chain}"
-              puts "closed: #{closed}"
+              # puts "chain: #{chain}"
+              # puts "closed: #{closed}"
               if chain
                 chain.each {|v|
                   poly.addPoint(v.position.transform(t))

@@ -1,4 +1,5 @@
 # load 'C:\Users\kgoulding\Documents\Development\Ruby\SpeckleRuby\speckle_ruby_sketchup_direct\ui\speckle_view.rb'
+# NOTE if SketchUp window is reporting a WebGL error: Close SketchUp; Undock laptop; Re-open SketchUp; Redock laptop
 require_relative '../interop/sketchup_interop'
 require_relative '../speckler'
 class SpeckleView
@@ -13,8 +14,8 @@ class SpeckleView
             :dialog_title => "Speckle",
             :scrollable => true,
             :resizable => true,
-            :width => 700,
-            :height => 550,
+            :width => 600,
+            :height => 750,
             :min_width => 200,
             :min_height => 200,
             :style => UI::HtmlDialog::STYLE_DIALOG
@@ -28,21 +29,25 @@ class SpeckleView
     # speckle_view_dialog.set_file(html_path)
 
     speckle_view_dialog.add_action_callback('getSelectedMesh') {|dialog, params|
-      # puts "setName CALLED with params : #{dialog} #{params}"
-      # args = JSON.parse(params)
-      send_response_to_view(get_current_selection, 'mesh')
+      puts "getSelectedMesh CALLED with params : #{dialog} #{params}"
+      send_response_to_view(get_current_selection(['face']), 'mesh', params)
     }
 
     speckle_view_dialog.add_action_callback('getSelectedPaths') {|dialog, params|
       # puts "setName CALLED with params : #{dialog} #{params}"
       # args = JSON.parse(params)
-      send_response_to_view(get_current_selection, 'paths')
+      send_response_to_view(get_current_selection(['edge']), 'paths', {})
+    }
+
+    speckle_view_dialog.add_action_callback('saveTextToFile') {|dialog, params|
+      json_file = UI.savepanel(params.title)
+      File.open(json_file, 'w') { |file| file.write(params.data) }
     }
 
     speckle_view_dialog.show
   end
 
-  def get_current_selection
+  def get_current_selection(types)
     model = Sketchup.active_model
     ss = model.selection
 
@@ -50,11 +55,12 @@ class SpeckleView
       UI.messagebox('Please select something')
       return
     end
-    @speckler.create_speckle_objects(ss)
+    @speckler.create_speckle_objects(ss, types)
   end
 
-  def send_response_to_view(response, command)
-    js_command = "Interop.UpdateObjects(#{JSON.generate(response)}, '#{command}');"
+  def send_response_to_view(response, command, params)
+    js_command = "Interop.UpdateObjects(#{JSON.generate(response)}, '#{command}', #{params.to_json});"
+    # puts js_command
     @dialog.execute_script(js_command)
   end
 
