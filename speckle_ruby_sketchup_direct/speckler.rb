@@ -2,6 +2,7 @@ require_relative 'sketchup_utils'
 require_relative '../speckle_ruby_core/response_object'
 require_relative '../speckle_ruby_core/speckle_mesh'
 require_relative '../speckle_ruby_core/speckle_polyline'
+require_relative '../speckle_ruby_core/speckle_camera'
 
 class Speckler
   def create_speckle_objects(ss, types = ['face', 'edge'])
@@ -147,6 +148,19 @@ class Speckler
   def mesh_point(transform, mesh, index)
     pt = mesh.point_at(index)
     pt.transform(transform)
+  end
+
+  def create_camera_response(camera)
+    response = ResponseObject.new
+    cam = SpeckleCamera.new
+    cam.eye = [camera.eye[0].to_f, camera.eye[1].to_f, camera.eye[2].to_f]
+    cam.target = [camera.target[0].to_f, camera.target[1].to_f, camera.target[2].to_f]
+    cam.up = [camera.up[0], camera.up[1], camera.up[2]]
+    if camera.perspective?
+      cam.fov = camera.fov
+    end
+    response.resources.push(cam)
+    response
   end
 end
 

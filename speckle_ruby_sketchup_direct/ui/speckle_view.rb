@@ -33,6 +33,11 @@ class SpeckleView
       send_response_to_view(get_current_selection(['face']), 'mesh', params)
     }
 
+    speckle_view_dialog.add_action_callback('getActiveView') {|dialog, params|
+      puts "getSelectedMesh CALLED with params : #{dialog} #{params}"
+      send_response_to_view(get_current_view, 'view', params)
+    }
+
     speckle_view_dialog.add_action_callback('getSelectedPaths') {|dialog, params|
       # puts "setName CALLED with params : #{dialog} #{params}"
       # args = JSON.parse(params)
@@ -40,11 +45,18 @@ class SpeckleView
     }
 
     speckle_view_dialog.add_action_callback('saveTextToFile') {|dialog, params|
-      json_file = UI.savepanel(params.title)
-      File.open(json_file, 'w') { |file| file.write(params.data) }
+      params['ext'] = 'json' if params['ext'].nil?
+      file_filter = '*.' + params['ext']
+      text_file_path = UI.savepanel(params['title'], Sketchup.active_model.path, file_filter+'|'+file_filter) #solution for weird bug where file_filter alone is misinterpreted
+      text_file_path += '.'+ params['ext'] unless text_file_path.end_with? '.'+ params['ext']
+      File.open(text_file_path, 'w') {|file| file.write(params['data'])}
     }
 
     speckle_view_dialog.show
+  end
+
+  def get_current_view()
+    @speckler.create_camera_response(Sketchup.active_model.active_view.camera)
   end
 
   def get_current_selection(types)
@@ -70,4 +82,4 @@ class SpeckleView
   end
 end
 
-SpeckleView.new.show_web_dialog
+# SpeckleView.new.show_web_dialog
