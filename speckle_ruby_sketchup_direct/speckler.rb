@@ -153,12 +153,23 @@ class Speckler
   def create_camera_response(camera)
     response = ResponseObject.new
     cam = SpeckleCamera.new
-    cam.eye = [camera.eye[0].to_f, camera.eye[1].to_f, camera.eye[2].to_f]
-    cam.target = [camera.target[0].to_f, camera.target[1].to_f, camera.target[2].to_f]
+    cam.eye = [camera.eye[0].to_f, camera.eye[2].to_f, -camera.eye[1].to_f]
+    cam.target = [camera.target[0].to_f, camera.target[2].to_f, -camera.target[1].to_f]
     cam.up = [camera.up[0], camera.up[1], camera.up[2]]
     if camera.perspective?
       cam.fov = camera.fov
     end
+
+    view = Sketchup.active_model.active_view
+    cam.aspectRatio = view.vpwidth.to_f / view.vpheight.to_f
+
+    # puts "#{cam.aspectRatio} from #{view.vpwidth} / #{view.vpheight}"
+
+    # testing positions match
+    # point1 = Geom::Point3d.new(camera.eye[0], camera.eye[1], camera.eye[2])
+    # point2 = Geom::Point3d.new(camera.target[0], camera.target[1], camera.target[2])
+    # line = Sketchup.active_model.active_entities.add_line(point1, point2)
+
     response.resources.push(cam)
     response
   end

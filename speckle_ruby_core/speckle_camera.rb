@@ -2,6 +2,7 @@ require_relative 'speckle_object'
 
 class SpeckleCamera < SpeckleObject
   attr_accessor :eye # [],
+  attr_accessor :aspectRatio
   attr_accessor :target # [],
   attr_accessor :up # [],
   attr_accessor :fov# float
@@ -14,6 +15,7 @@ class SpeckleCamera < SpeckleObject
     @target = [0,1,0]
     @up = [0,0,1]
     @fov = 90
+    @aspectRatio = 1
   end
 
   def to_hash
@@ -21,7 +23,8 @@ class SpeckleCamera < SpeckleObject
         :eye=> @eye,
         :target=> @target,
         :up=> @up,
-        :fov=> @fov
+        :fov=> @fov,
+        :aspectRatio=> @aspectRatio,
     }.merge(super.to_hash)
   end
 end

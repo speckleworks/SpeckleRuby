@@ -1,4 +1,6 @@
 # load 'C:\Users\kgoulding\Documents\Development\Ruby\SpeckleRuby\speckle_ruby_sketchup_direct\ui\speckle_view.rb'
+# load 'C:\Users\kgoulding\Documents\Development\Ruby\SpeckleRuby\speckle_ruby_sketchup_direct\speckler.rb'
+# load 'C:\Users\kgoulding\Documents\Development\Ruby\SpeckleRuby\speckle_ruby_core\speckle_camera.rb'
 # NOTE if SketchUp window is reporting a WebGL error: Close SketchUp; Undock laptop; Re-open SketchUp; Redock laptop
 require_relative '../interop/sketchup_interop'
 require_relative '../speckler'
@@ -9,13 +11,16 @@ class SpeckleView
   end
 
   def show_web_dialog
+    width = 600
+    height = 750
+
     speckle_view_dialog = UI::HtmlDialog.new(
         {
             :dialog_title => "Speckle",
             :scrollable => true,
             :resizable => true,
-            :width => 600,
-            :height => 750,
+            :width => width,
+            :height => height,
             :min_width => 200,
             :min_height => 200,
             :style => UI::HtmlDialog::STYLE_DIALOG
@@ -44,12 +49,25 @@ class SpeckleView
       send_response_to_view(get_current_selection(['edge']), 'paths', {})
     }
 
+    speckle_view_dialog.add_action_callback('setWindowSize') {|dialog, params|
+      puts "setWindowSize CALLED with params : #{dialog} #{params} #{params['width']} #{params['height']}"
+      @dialog.set_size(params['width'], params['height'])
+    }
+
     speckle_view_dialog.add_action_callback('saveTextToFile') {|dialog, params|
       params['ext'] = 'json' if params['ext'].nil?
       file_filter = '*.' + params['ext']
-      text_file_path = UI.savepanel(params['title'], Sketchup.active_model.path, file_filter+'|'+file_filter) #solution for weird bug where file_filter alone is misinterpreted
-      text_file_path += '.'+ params['ext'] unless text_file_path.end_with? '.'+ params['ext']
+      text_file_path = UI.savepanel(params['title'], Sketchup.active_model.path, file_filter + '|' + file_filter) #solution for weird bug where file_filter alone is misinterpreted
+      text_file_path += '.' + params['ext'] unless text_file_path.end_with? '.' + params['ext']
       File.open(text_file_path, 'w') {|file| file.write(params['data'])}
+    }
+
+    speckle_view_dialog.add_action_callback('pageLoad') {|dialog, params|
+      puts 'PAGE LOAD'
+      window_size = Hash.new
+      window_size['width'] = width
+      window_size['height'] = height
+      set_data('window-size', window_size) #this is needed because window.outerWidth does not match window width - so we need a way to track the difference
     }
 
     speckle_view_dialog.show
@@ -68,6 +86,11 @@ class SpeckleView
       return
     end
     @speckler.create_speckle_objects(ss, types)
+  end
+
+  def set_data(variable, data)
+    js_command = "Interop.SetData('#{variable}', #{data.to_json});"
+    @dialog.execute_script(js_command)
   end
 
   def send_response_to_view(response, command, params)
